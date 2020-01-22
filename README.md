@@ -16,8 +16,8 @@ Your .c files will be compilated with g3 flag.
 
 # FLAGS
 
--d: Create a Makefile without the debug mode
--t: Create a Makefile without the tests_run mode
+-d: Create a Makefile without the debug mode.
+-t: Create a Makefile without the tests_run mode.
 
 # WARNING
 
