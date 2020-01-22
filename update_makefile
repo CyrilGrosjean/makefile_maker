@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+
+import sys
+from datetime import *
+from os import getcwd, chdir, listdir
+
+options = [True, True]
+arguments = sys.argv
+
+def bold():
+    return "\033[1m"
+
+def green():
+    return "\033[92m"
+
+def fail():
+    return "\033[91m"
+
+def warn():
+    return "\033[93m"
+
+def end():
+    return "\033[0m"
+
+def create_makefile(file_src, file_test, name):
+    global options
+
+    date = datetime.now()
+    year = date.year
+    copy_src = file_src.copy()
+
+    if date.month < 9:
+        year -= 1
+
+    print(warn() + "Creating Makefile with your options..." + end())
+    makefile_text = ["##", "## EPITECH PROJECT, " + str(year), "## Makefile by update_makefile", "## File description:", "## Makefile auto generated, program by MrUrica", "##", ""]
+    makefile_text.append("SRC_MAIN =\t" + str(file_src[0]) + "\t\\")
+    del file_src[0]
+
+    for i in file_src:
+        makefile_text.append("\t\t\t" + str(i) + "\t\\")
+    makefile_text.append("")
+    if options[1]:
+        if "main.c" not in copy_src[0]:
+            makefile_text.append("SRC =\t\t" + str(copy_src[0]) + "\t\\")
+            del copy_src[0]
+        else:
+            makefile_text.append("SRC =\t\t" + str(copy_src[1]) + "\t\\")
+            del copy_src[1]
+        for i in copy_src:
+            if "main.c" not in i:
+                makefile_text.append("\t\t\t" + str(i) + "\t\\")
+        makefile_text.append("")
+        if len(file_test) != 0:
+            makefile_text.append("SRC_TEST =\t" + str(file_test[0]) + "\t\\")
+            del file_test[0]
+
+            for i in file_test:
+                makefile_text.append("\t\t\t" + str(i) + "\t\\")
+            makefile_text.append("")
+    makefile_text.append("OBJ =\t$(SRC_MAIN:.c=.o)")
+    makefile_text.append("")
+    makefile_text.append("NAME =\t\t" + str(name))
+    makefile_text.append("")
+    if options[1]:
+        makefile_text.append("TEST_NAME =\tunit_tests")
+        makefile_text.append("")
+        makefile_text.append("TEST_FLAG = -lcriterion --coverage")
+        makefile_text.append("")
+    makefile_text.append("CFLAGS = -W -Wextra -Wall -C")
+    makefile_text.append("")
+    if options[0]:
+        makefile_text.append("DEBUG_FLAGS = -W -Wall -Wextra -C -g3")
+        makefile_text.append("")
+    makefile_text.append("all:\t$(NAME)")
+    makefile_text.append("")
+    makefile_text.append("$(NAME):\t$(OBJ)")
+    makefile_text.append("\tgcc $(CFLAGS) $(OBJ) -o $(NAME)")
+    makefile_text.append("")
+    if options[0]:
+        makefile_text.append("debug:\t$(OBJ)")
+        makefile_text.append("\tgcc $(DEBUG_FLAGS) $(OBJ) -o $(NAME)")
+        makefile_text.append("")
+    makefile_text.append("clean:")
+    makefile_text.append("\trm -rf $(OBJ)")
+    if options[1]:
+        makefile_text.append("\trm -rf *.gc*")
+        makefile_text.append("\trm -rf tests/*.gc*")
+    makefile_text.append("")
+    makefile_text.append("fclean:\tclean")
+    makefile_text.append("\trm -rf $(NAME)")
+    if options[1]:
+        makefile_text.append("\trm -rf $(TEST_NAME)")
+    makefile_text.append("")
+    makefile_text.append("re:\tfclean all")
+    makefile_text.append("")
+    if options[1]:
+        makefile_text.append("tests_run:\t$(SRC_TEST) $(SRC)")
+        makefile_text.append("\t\t\t\tgcc $(TEST_FLAG) $(SRC) $(SRC_TEST) -o $(TEST_NAME)")
+        makefile_text.append("\t\t\t\t./$(TEST_NAME)")
+
+    file = open("Makefile", "w", encoding='utf-8')
+    text = "\n".join(makefile_text)
+    file.write(text)
+    file.close()
+    print(green() + "Your Makefile has been successfully created !" + end())
+
+def find_files(name):
+    global options
+
+    repos = ["./"]
+    files_src = []
+    files_tests = []
+    nb_files_tests = 0
+    nb_files = 0
+
+    print(warn() + "Finding .c files..." + end())
+    while len(repos) != 0:
+        file_list = listdir(repos[0])
+        for i in file_list:
+            if ".c" in i:
+                if "./tests/" in repos[0]:
+                    files_tests.append(repos[0] + i)
+                    nb_files_tests += 1
+                elif "./bonus/" not in repos[0]:
+                    files_src.append(repos[0] + i)
+                    nb_files += 1
+            else:
+                try:
+                    temp = listdir(repos[0] + i + "/")
+                    repos.append(repos[0] + i + "/")
+                    del temp
+                except:
+                    pass
+        del repos[0]
+        file_list = []
+    if nb_files == 0:
+        print(fail() + "Error: Cannot find any src file !")
+        exit(84)
+    print(green() + "Found " + warn() + bold() + str(nb_files) + end() + green() + " src file(s) !")
+    if options[1]:
+        print(green() + "Found " + warn() + bold() + str(nb_files_tests) + end() + green() + " test file(s) !")
+    create_makefile(files_src, files_tests, name)
+
+name = "a.out"
+
+if len(arguments) != 1:
+    if arguments[1] == "-h":
+        print(green() + "USAGE:\n\t./update_makefile <binary_name> [-d] [-t]")
+        print(green() + "./update_makefile -h" + end() + " : Display help (this text)")
+        print(green() + "./update_makefile -d" + end() + " : Create a makefile without debug mode")
+        print(green() + "./update_makefile -t" + end() + " : Create a makefile without tests_run")
+        print(warn() + "Makefile will be created with tests_run if you have a 'tests' repository.\nMakefile will be created with debug mode, usage: make debug" + end())
+        exit(0)
+    else:
+        for i in range(1, len(arguments)):
+            if arguments[i] == "-d":
+                options[0] = False
+            elif arguments[i] == "-t":
+                options[1] = False
+            else:
+                name = arguments[i]
+find_files(name)
