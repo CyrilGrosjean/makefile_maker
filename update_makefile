@@ -146,7 +146,7 @@ name = "a.out"
 
 if len(arguments) != 1:
     if arguments[1] == "-h":
-        print(green() + "USAGE:\n\t./update_makefile <binary_name> [-d] [-t]")
+        print(green() + "USAGE:\n\t./update_makefile <binary_name> <-d> <-t>")
         print(green() + "./update_makefile -h" + end() + " : Display help (this text)")
         print(green() + "./update_makefile -d" + end() + " : Create a makefile without debug mode")
         print(green() + "./update_makefile -t" + end() + " : Create a makefile without tests_run")
