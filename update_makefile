@@ -70,7 +70,7 @@ def create_makefile(file_src, file_test, name):
     makefile_text.append("CFLAGS = -W -Wextra -Wall -C")
     makefile_text.append("")
     if options[0]:
-        makefile_text.append("DEBUG_FLAGS = -W -Wall -Wextra -C -g3")
+        makefile_text.append("DEBUG_FLAGS = -g3")
         makefile_text.append("")
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
@@ -79,7 +79,7 @@ def create_makefile(file_src, file_test, name):
     makefile_text.append("")
     if options[0]:
         makefile_text.append("debug:\t$(OBJ)")
-        makefile_text.append("\tgcc $(DEBUG_FLAGS) $(OBJ) -o $(NAME)")
+        makefile_text.append("\tgcc $(DEBUG_FLAGS) $(CFLAGS) $(OBJ) -o $(NAME)")
         makefile_text.append("")
     makefile_text.append("clean:")
     makefile_text.append("\trm -rf $(OBJ)")
