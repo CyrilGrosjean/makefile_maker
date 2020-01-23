@@ -2,7 +2,7 @@
 This makefile generator was created by Cyril Grosjean.
 
 # How to use
-./update_makefile <binary name> <-d> <-t>
+./update_makefile <binary_name> <-d> <-t>
 
 You can run the program without arguments.
 The default binary name will be 'a.out'
