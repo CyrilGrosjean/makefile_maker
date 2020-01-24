@@ -4,7 +4,7 @@ import sys
 from datetime import *
 from os import getcwd, chdir, listdir
 
-options = [False, False]
+options = [False, False, False, False]
 arguments = sys.argv
 
 def bold():
@@ -66,8 +66,18 @@ def create_makefile(file_src, file_test, name):
         makefile_text.append("TEST_NAME =\tunit_tests")
         makefile_text.append("")
         makefile_text.append("TEST_FLAG = -lcriterion --coverage")
+        if options[2]:
+            makefile_text[-1] += " -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-system"
+        if options[3]:
+            makefile_text[-1] += " -lncurses"
         makefile_text.append("")
     makefile_text.append("CFLAGS = -W -Wextra -Wall -C")
+    if options[2]:
+        print(warn() + "Adding csfml flags..." + end())
+        makefile_text[-1] += " -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-system"
+    if options[3]:
+        print(warn() + "Adding ncurses flags..." + end())
+        makefile_text[-1] += " -lncurses"
     makefile_text.append("")
     if options[0]:
         makefile_text.append("DEBUG_FLAGS = -g3")
@@ -75,11 +85,11 @@ def create_makefile(file_src, file_test, name):
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
     makefile_text.append("$(NAME):\t$(OBJ)")
-    makefile_text.append("\tgcc $(CFLAGS) $(OBJ) -o $(NAME)")
+    makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -o $(NAME)")
     makefile_text.append("")
     if options[0]:
         makefile_text.append("debug:\t$(OBJ)")
-        makefile_text.append("\tgcc $(DEBUG_FLAGS) $(CFLAGS) $(OBJ) -o $(NAME)")
+        makefile_text.append("\tgcc $(OBJ) $(DEBUG_FLAGS) $(CFLAGS) -o $(NAME)")
         makefile_text.append("")
     makefile_text.append("clean:")
     makefile_text.append("\trm -rf $(OBJ)")
@@ -96,7 +106,7 @@ def create_makefile(file_src, file_test, name):
     makefile_text.append("")
     if options[1]:
         makefile_text.append("tests_run:\t$(SRC_TEST) $(SRC)")
-        makefile_text.append("\t\t\t\tgcc $(TEST_FLAG) $(SRC) $(SRC_TEST) -o $(TEST_NAME)")
+        makefile_text.append("\t\t\t\tgcc $(SRC) $(SRC_TEST) $(TEST_FLAG) -o $(TEST_NAME)")
         makefile_text.append("\t\t\t\t./$(TEST_NAME)")
 
     file = open("Makefile", "w", encoding='utf-8')
@@ -158,6 +168,10 @@ if len(arguments) != 1:
                 options[0] = True
             elif arguments[i] == "-t":
                 options[1] = True
+            elif arguments[i] == '-csfml':
+                options[2] = True
+            elif arguments[i] == '-ncurses':
+                options[3] = True
             else:
                 name = arguments[i]
 find_files(name)
