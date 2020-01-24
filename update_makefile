@@ -164,14 +164,29 @@ if len(arguments) != 1:
         exit(0)
     else:
         for i in range(1, len(arguments)):
-            if arguments[i] == "-d":
-                options[0] = True
-            elif arguments[i] == "-t":
-                options[1] = True
-            elif arguments[i] == '-csfml':
-                options[2] = True
-            elif arguments[i] == '-ncurses':
-                options[3] = True
-            else:
+            if arguments[i][0] == '-':
+                if arguments[i][1] == 'd':
+                    options[0] = True
+                elif arguments[i][1] == 't':
+                    options[1] = True
+                elif arguments[i][1] == 'c':
+                    if arguments[i] == "-csfml":
+                        options[2] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                        exit(84)
+                elif arguments[i][1] == 'n':
+                    if arguments[i] == "-ncurses":
+                        options[3] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                        exit(84)
+                else:
+                    print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                    exit(84)
+            elif name == "a.out":
                 name = arguments[i]
+            else:
+                print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                exit(84)
 find_files(name)
