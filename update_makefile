@@ -156,12 +156,11 @@ name = "a.out"
 
 if len(arguments) != 1:
     if arguments[1] == "-h":
-        print(green() + "USAGE:\n\t./update_makefile <binary_name> <-d> <-t>")
-        print(green() + "./update_makefile -h" + end() + " : Display help (this text)")
-        print(green() + "./update_makefile -d" + end() + " : Create a makefile with debug mode")
-        print(green() + "./update_makefile -t" + end() + " : Create a makefile with tests_run")
-        print(warn() + "Makefile will be created with tests_run if you have a 'tests' repository.\nMakefile will be created with debug mode, usage: make debug" + end())
-        exit(0)
+        print(green() + "USAGE:\n\t./update_makefile <binary name> <flags>\n" + end())
+        print(warn() + "FLAGS:\n" + end() + "-d: Debug flag, create a rule named debug. Use make debug.")
+        print("-t: Test flag, create makefile for units tests, get .c files in 'tests/' repository. Use make tests_run")
+        print("-csfml: CSFML flag, create a makefile for graphical programs.")
+        print("-ncurses: NCURSES flag, create a makefile for ncurses programs.")
     else:
         for i in range(1, len(arguments)):
             if arguments[i][0] == '-':

@@ -2,7 +2,7 @@
 This makefile generator was created by Cyril Grosjean.
 
 # How to use
-./update_makefile <binary_name> <-d> <-t>
+./update_makefile <binary_name> <flags>
 
 You can run the program without arguments.
 The default binary name will be 'a.out'
@@ -18,6 +18,8 @@ Your .c files will be compilated with g3 flag.
 
 -d: Create a Makefile with the debug mode.
 -t: Create a Makefile with the tests_run mode.
+-csfml: Create a Makefile for graphical programs.
+-ncurses: Create a Makefile for ncurses programs.
 
 # WARNING
 
