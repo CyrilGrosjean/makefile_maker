@@ -28,3 +28,7 @@ Your .c files will be compilated with g3 flag.
 
 The Makefile generator don't include in src files your .c files in the repository bonus.
 The program don't read .c files in repositories before your open repository.
+
+# FUTURE CHANGES
+
+Adding parameter to compile with your lib.
