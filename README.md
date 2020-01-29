@@ -19,8 +19,16 @@ Your .c files will be compilated with g3 flag.
 -t: Create a Makefile with the tests_run mode.
 -csfml: Create a Makefile for graphical programs.
 -ncurses: Create a Makefile for ncurses programs.
+-lib: Your .c files will be compilated with your .a file.
 
 # WARNING
 
 The Makefile generator don't include in src files your .c files in the repository bonus.
 The program don't read .c files in repositories before your open repository.
+
+# TIP
+
+Move the file into an repository in your environement path or use an alias on it:
+alias update_makefile [link to your path]/update_makefile.
+
+Then you can use anywhere this script without move it.

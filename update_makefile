@@ -4,7 +4,7 @@ import sys
 from datetime import *
 from os import getcwd, chdir, listdir
 
-options = [False, False, False, False]
+options = [False, False, False, False, False]
 arguments = sys.argv
 
 def bold():
@@ -22,7 +22,7 @@ def warn():
 def end():
     return "\033[0m"
 
-def create_makefile(file_src, file_test, name):
+def create_makefile(file_src, file_test, file_lib, name):
     global options
 
     date = datetime.now()
@@ -58,6 +58,15 @@ def create_makefile(file_src, file_test, name):
             for i in file_test:
                 makefile_text.append("\t\t\t" + str(i) + "\t\\")
             makefile_text.append("")
+    if options[4]:
+        if len(file_lib) != 0:
+            print(warn() + "Adding lib files..." + end())
+            makefile_text.append("SRC_LIB =\t" + str(file_lib[0]) + "\t\\")
+            del file_lib[0]
+
+            for i in file_lib:
+                makefile_text.append("\t\t\t" + str(i) + "\t\\")
+            makefile_text.append("")
     makefile_text.append("OBJ =\t$(SRC_MAIN:.c=.o)")
     makefile_text.append("")
     makefile_text.append("NAME =\t\t" + str(name))
@@ -73,6 +82,7 @@ def create_makefile(file_src, file_test, name):
         makefile_text.append("")
     text = "CFLAGS = -W -Wall -Wextra -C"
     if options[0]:
+        print(warn() + "Adding g3 flag..." + end())
         text += " -g3"
     makefile_text.append(text)
     del text
@@ -86,7 +96,10 @@ def create_makefile(file_src, file_test, name):
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
     makefile_text.append("$(NAME):\t$(OBJ)")
-    makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -o $(NAME)")
+    if options[4]:
+        makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -L. $(SRC_LIB) -o $(NAME)")
+    else:
+        makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -o $(NAME)")
     makefile_text.append("")
     makefile_text.append("clean:")
     makefile_text.append("\trm -rf $(OBJ)")
@@ -118,7 +131,9 @@ def find_files(name):
     repos = ["./"]
     files_src = []
     files_tests = []
+    files_lib = []
     nb_files_tests = 0
+    nb_files_lib = 0
     nb_files = 0
 
     print(warn() + "Finding .c files..." + end())
@@ -132,6 +147,9 @@ def find_files(name):
                 elif "./bonus/" not in repos[0]:
                     files_src.append(repos[0] + i)
                     nb_files += 1
+            elif ".a" in i:
+                files_lib.append(repos[0] + i)
+                nb_files_lib += 1
             else:
                 try:
                     temp = listdir(repos[0] + i + "/")
@@ -146,8 +164,10 @@ def find_files(name):
         exit(84)
     print(green() + "Found " + warn() + bold() + str(nb_files) + end() + green() + " src file(s) !")
     if options[1]:
-        print(green() + "Found " + warn() + bold() + str(nb_files_tests) + end() + green() + " test file(s) !")
-    create_makefile(files_src, files_tests, name)
+        print(green() + "Found " + warn() + bold() + str(nb_files_tests) + end() + green() + " test(s) file(s) !")
+    if options[4]:
+        print(green() + "Found " + warn() + bold() + str(nb_files_lib) + end() + green() + " library(ies) file(s) !")
+    create_makefile(files_src, files_tests, files_lib, name)
 
 name = "a.out"
 
@@ -158,6 +178,7 @@ if len(arguments) != 1:
         print("-t: Test flag, create makefile for units tests, get .c files in 'tests/' repository. Use make tests_run")
         print("-csfml: CSFML flag, create a makefile for graphical programs.")
         print("-ncurses: NCURSES flag, create a makefile for ncurses programs.")
+        print("-lib: compile your program with your '.a' file.")
         exit(0)
     else:
         for i in range(1, len(arguments)):
@@ -175,6 +196,12 @@ if len(arguments) != 1:
                 elif arguments[i][1] == 'n':
                     if arguments[i] == "-ncurses":
                         options[3] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                        exit(84)
+                elif arguments[i][1] == 'l':
+                    if arguments[i] == "-lib":
+                        options[4] = True
                     else:
                         print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                         exit(84)
