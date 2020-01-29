@@ -71,7 +71,11 @@ def create_makefile(file_src, file_test, name):
         if options[3]:
             makefile_text[-1] += " -lncurses"
         makefile_text.append("")
-    makefile_text.append("CFLAGS = -W -Wextra -Wall -C")
+    text = "CFLAGS = -W -Wall -Wextra -C"
+    if options[0]:
+        text += " -g3"
+    makefile_text.append(text)
+    del text
     if options[2]:
         print(warn() + "Adding csfml flags..." + end())
         makefile_text[-1] += " -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-system"
@@ -79,18 +83,11 @@ def create_makefile(file_src, file_test, name):
         print(warn() + "Adding ncurses flags..." + end())
         makefile_text[-1] += " -lncurses"
     makefile_text.append("")
-    if options[0]:
-        makefile_text.append("DEBUG_FLAGS = -g3")
-        makefile_text.append("")
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
     makefile_text.append("$(NAME):\t$(OBJ)")
     makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -o $(NAME)")
     makefile_text.append("")
-    if options[0]:
-        makefile_text.append("debug:\t$(OBJ)")
-        makefile_text.append("\tgcc $(OBJ) $(DEBUG_FLAGS) $(CFLAGS) -o $(NAME)")
-        makefile_text.append("")
     makefile_text.append("clean:")
     makefile_text.append("\trm -rf $(OBJ)")
     if options[1]:
@@ -157,10 +154,11 @@ name = "a.out"
 if len(arguments) != 1:
     if arguments[1] == "-h":
         print(green() + "USAGE:\n\t./update_makefile <binary name> <flags>\n" + end())
-        print(warn() + "FLAGS:\n" + end() + "-d: Debug flag, create a rule named debug. Use make debug.")
+        print(warn() + "FLAGS:\n" + end() + "-d: Debug flag, add -g3 flag when we use make.")
         print("-t: Test flag, create makefile for units tests, get .c files in 'tests/' repository. Use make tests_run")
         print("-csfml: CSFML flag, create a makefile for graphical programs.")
         print("-ncurses: NCURSES flag, create a makefile for ncurses programs.")
+        exit(0)
     else:
         for i in range(1, len(arguments)):
             if arguments[i][0] == '-':
