@@ -16,9 +16,13 @@ Your .c files will be compilated with g3 flag.
 # FLAGS
 
 -d: Create a Makefile with the g3 flag.
+
 -t: Create a Makefile with the tests_run mode.
+
 -csfml: Create a Makefile for graphical programs.
+
 -ncurses: Create a Makefile for ncurses programs.
+
 -lib: Your .c files will be compilated with your .a file.
 
 # WARNING
