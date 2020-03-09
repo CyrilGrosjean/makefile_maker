@@ -9,11 +9,11 @@ The default binary name will be __'a.out'__
 
 The program detect automatically your .c files (if they are src files or tests files)
 
-# Debug mode
+## Debug mode
 
 Your .c files will be compilated with g3 flag.
-_
-# FLAGS
+
+## FLAGS
 
 | Flags | Details |
 | ----- |:-------:|
@@ -23,14 +23,14 @@ _
 |-ncurses | Create a Makefile for ncurses programs. |
 |-lib | Your .c files will be compilated with your .a file. |
 
-# WARNING
+## WARNING
 
-The Makefile generator don't include in src files your .c files in the repository bonus.
+The Makefile generator **don't** include in src files your .c files in the repository bonus.
 The program don't read .c files in repositories before your open repository.
 
-# TIP
+## TIP
 
 Move the file into an repository in your environement path or use an alias on it:
-alias update_makefile [link to your path]/update_makefile.
+`alias update_makefile [link to your path]/update_makefile`
 
 Then you can use anywhere this script without move it.
