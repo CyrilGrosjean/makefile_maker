@@ -1,8 +1,8 @@
 # Makefile Maker
 This makefile generator was created by Cyril Grosjean.
 
-# How to use
-./update_makefile [binary_name] [flags]
+## How to use
+`./update_makefile _[binary_name] [flags]_`
 
 You can run the program without arguments.
 The default binary name will be 'a.out'
