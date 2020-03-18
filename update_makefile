@@ -46,7 +46,7 @@ def search_update():
                 require_update = True
 
         if require_update:
-            print(warn() + "Your version is outdated ! (your version: " + ".".join(version) + "; actual: " + check_version + ")\nStarting update..." + end())
+            print(warn() + "Your version is outdated ! (your version: " + ".".join(version) + "; actual: " + ".".join(check_version) + ")\nStarting update..." + end())
             del file_content
             remove("n_ver.txt")
             file_found = False
