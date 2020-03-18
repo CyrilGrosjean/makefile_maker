@@ -24,6 +24,12 @@ Your .c files will be compilated with g3 flag.
 |-lib | Your .c files will be compilated with your .a file. |
 |-include | Your makefile will add './include/' include repository. |
 
+## Auto Update
+
+The program can be updated __automatically__ when you launch it !
+This depends on your Internet connection.
+If you haven't Internet connection you can __still__ use the program.
+
 ## WARNING
 
 The Makefile generator **don't** include in src files your .c files in the repository bonus.
