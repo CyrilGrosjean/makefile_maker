@@ -2,10 +2,77 @@
 
 import sys
 from datetime import *
-from os import getcwd, chdir, listdir
+from os import getcwd, chdir, listdir, remove, path, chmod
+import requests
 
 options = [False, False, False, False, False, False]
 arguments = sys.argv
+version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
+file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
+actual_version = "1.3.0"
+file_directory = path.abspath(__file__)
+
+def search_update():
+    global actual_version
+    global version_link
+    global file_directory
+    global file_link
+
+    version = []
+    check_version = []
+
+    print(warn() + "Checking for updates..." + end())
+    version = actual_version.split(".")
+    file_found = False
+    try:
+        r = requests.get(version_link)
+        file_found = True
+    except:
+        file_found = False
+
+    if file_found:
+        with open('n_ver.txt', 'wb') as f:
+            f.write(r.content)
+        del r
+
+        file = open("n_ver.txt", 'r')
+        file_content = file.read()
+        file.close()
+        check_version = file_content.split(".")
+
+        require_update = False
+        for i in range(0, len(version)):
+            if version[i] != check_version[i]:
+                require_update = True
+
+        if require_update:
+            print(warn() + "Your version is outdated ! (your version: " + ".".join(version) + "; actual: " + check_version + ")\nStarting update..." + end())
+            del file_content
+            remove("n_ver.txt")
+            file_found = False
+            try:
+                r = requests.get(file_link)
+                file_found = True
+            except:
+                file_found = False
+
+            if file_found:
+                with open(file_directory, 'wb') as f:
+                    f.write(r.content)
+                del r
+                chmod(file_directory, 777)
+                print(green() + "Program updated !\nPlease restart the program with './update_makefile'" + end())
+                exit(0)
+            else:
+                print(fail() + "No Internet connection.\n" + endl())
+        else:
+            print(green() + "The program already up to date !\n" + end())
+            del file_content
+            del check_version
+            del version
+    else:
+        print(fail() + "No Internet connection.\n" + end())
+
 
 def bold():
     return "\033[1m"
@@ -173,6 +240,8 @@ def find_files(name):
     create_makefile(files_src, files_tests, files_lib, name)
 
 name = "a.out"
+
+search_update()
 
 if len(arguments) != 1:
     if arguments[1] == "-h":
