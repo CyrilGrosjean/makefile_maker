@@ -3,7 +3,9 @@
 import sys
 from datetime import *
 from os import getcwd, chdir, listdir, remove, path, chmod
+from os import stat as stats
 import requests
+import stat
 
 options = [False, False, False, False, False, False]
 arguments = sys.argv
@@ -60,7 +62,8 @@ def search_update():
                 with open(file_directory, 'wb') as f:
                     f.write(r.content)
                 del r
-                chmod(file_directory, 777)
+                st = stats(file_directory)
+                chmod(file_directory, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
                 print(green() + "Program updated !\nPlease restart the program with './update_makefile'" + end())
                 exit(0)
             else:
@@ -100,7 +103,7 @@ def create_makefile(file_src, file_test, file_lib, name):
         year -= 1
 
     print(warn() + "Creating Makefile with your options..." + end())
-    makefile_text = ["##", "## EPITECH PROJECT, " + str(year), "## Makefile by update_makefile", "## File description:", "## Makefile auto generated, program by MrUrica", "##", ""]
+    makefile_text = ["##", "## EPITECH PROJECT, " + str(year), "## Makefile by update_makefile", "## File description:", "## Makefile auto generated, by Cyril Grosjean version: " + actual_version, "##", ""]
     makefile_text.append("SRC_MAIN =\t" + str(file_src[0]) + "\t\\")
     del file_src[0]
 
