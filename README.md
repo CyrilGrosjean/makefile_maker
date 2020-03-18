@@ -22,6 +22,7 @@ Your .c files will be compilated with g3 flag.
 |-csfml | Create a Makefile for graphical programs. |
 |-ncurses | Create a Makefile for ncurses programs. |
 |-lib | Your .c files will be compilated with your .a file. |
+|-include | Your makefile will add './include/' include repository. |
 
 ## WARNING
 
