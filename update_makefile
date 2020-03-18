@@ -4,7 +4,7 @@ import sys
 from datetime import *
 from os import getcwd, chdir, listdir
 
-options = [False, False, False, False, False]
+options = [False, False, False, False, False, False]
 arguments = sys.argv
 
 def bold():
@@ -96,10 +96,13 @@ def create_makefile(file_src, file_test, file_lib, name):
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
     makefile_text.append("$(NAME):\t$(OBJ)")
+    makefile_text.append("\tgcc $(OBJ) $(CFLAGS)")
     if options[4]:
-        makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -L. $(SRC_LIB) -o $(NAME)")
-    else:
-        makefile_text.append("\tgcc $(OBJ) $(CFLAGS) -o $(NAME)")
+        makefile_text[-1] += " -L. $(SRC_LIB)"
+    if options[5]:
+        print(warn() + "Adding include flag..." + end())
+        makefile_text[-1] += " -I./include/"
+    makefile_text[-1] += " -o $(NAME)"
     makefile_text.append("")
     makefile_text.append("clean:")
     makefile_text.append("\trm -rf $(OBJ)")
@@ -179,6 +182,7 @@ if len(arguments) != 1:
         print("-csfml: CSFML flag, create a makefile for graphical programs.")
         print("-ncurses: NCURSES flag, create a makefile for ncurses programs.")
         print("-lib: compile your program with your '.a' file.")
+        print("-include: add the '/include/' repository to your makefile.")
         exit(0)
     else:
         for i in range(1, len(arguments)):
@@ -205,6 +209,11 @@ if len(arguments) != 1:
                     else:
                         print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                         exit(84)
+                elif arguments[i][1] == 'i':
+                    if arguments[i] == '-include':
+                        options[5] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                 else:
                     print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                     exit(84)
