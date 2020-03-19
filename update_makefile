@@ -11,7 +11,7 @@ options = [False, False, False, False, False, False]
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.3.1"
+actual_version = "1.3.2"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -40,6 +40,7 @@ def search_update():
         file = open("n_ver.txt", 'r')
         file_content = file.read()
         file.close()
+        remove("n_ver.txt")
         check_version = file_content.split(".")
 
         require_update = False
