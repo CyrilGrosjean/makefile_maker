@@ -11,7 +11,7 @@ options = [False, False, False, False, False, False]
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.3.2"
+actual_version = "1.3.3"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -150,6 +150,9 @@ def create_makefile(file_src, file_test, file_lib, name):
             makefile_text[-1] += " -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-system"
         if options[3]:
             makefile_text[-1] += " -lncurses"
+        if options[5]:
+            print(warn() + "Adding include flag..." + end())
+            makefile_text[-1] += " -I./include/"
         makefile_text.append("")
     text = "CFLAGS = -W -Wall -Wextra -C"
     if options[0]:
@@ -170,9 +173,6 @@ def create_makefile(file_src, file_test, file_lib, name):
     makefile_text.append("\tgcc $(OBJ) $(CFLAGS)")
     if options[4]:
         makefile_text[-1] += " -L. $(SRC_LIB)"
-    if options[5]:
-        print(warn() + "Adding include flag..." + end())
-        makefile_text[-1] += " -I./include/"
     makefile_text[-1] += " -o $(NAME)"
     makefile_text.append("")
     makefile_text.append("clean:")
