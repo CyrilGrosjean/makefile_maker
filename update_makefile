@@ -11,7 +11,7 @@ options = [False, False, False, False, False, False]
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.3.4"
+actual_version = "1.3.5"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -150,7 +150,6 @@ def create_makefile(file_src, file_test, file_lib, name):
         if options[3]:
             makefile_text[-1] += " -lncurses"
         if options[5]:
-            print(warn() + "Adding include flag..." + end())
             makefile_text[-1] += " -I./include/"
         makefile_text.append("")
     text = "CFLAGS = -W -Wall -Wextra -C"
@@ -165,6 +164,9 @@ def create_makefile(file_src, file_test, file_lib, name):
     if options[3]:
         print(warn() + "Adding ncurses flags..." + end())
         makefile_text[-1] += " -lncurses"
+    if options[5]:
+        print(warn() + "Adding include flag..." + end())
+        makefile_text[-1] += " -I./include/"
     makefile_text.append("")
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
