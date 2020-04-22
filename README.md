@@ -41,3 +41,8 @@ Move the file into an repository in your environement path or use an alias on it
 `alias update_makefile [link to your path]/update_makefile`
 
 Then you can use anywhere this script without move it.
+
+## Last Update
+
+The version 1.4.0 changed the __'-t' flag__ !
+Now when you execute `make tests_run` it will display the details of your tests.
