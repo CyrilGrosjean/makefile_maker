@@ -7,11 +7,11 @@ from os import stat as stats
 import requests
 import stat
 
-options = [False, False, False, False, False, False]
+options = [False, False, False, False, False, False, False, False] # -d, -t, -csfml, -ncures, -lib, -include, -gcovr, -shell
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.4.0"
+actual_version = "1.5.0"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -104,30 +104,59 @@ def create_makefile(file_src, file_test, file_lib, name):
 
     print(warn() + "Creating Makefile with your options..." + end())
     makefile_text = ["##", "## EPITECH PROJECT, " + str(year), "## Makefile by update_makefile", "## File description:", "## Makefile auto generated, by Cyril Grosjean version: " + actual_version, "##", ""]
-    makefile_text.append("SRC_MAIN =\t" + str(file_src[0]) + "\t\\")
-    del file_src[0]
+    if options[7]:
+        tmp = []
+        for i in file_src:
+            if i.count("/") == 1:
+                print(fail() + "FAILURE: -shell flag can't be used for src files in root repository.\nPlease create a src repository and store your src files in before restarting the makefile maker.")
+                exit(0)
+            if i.split("/")[1] not in tmp:
+                tmp.append(i.split("/")[1])
+        makefile_text.append("SRC_MAIN=\t$(shell find " + tmp[0] + " -name \"*.c\")")
+        del tmp[0]
+        for i in tmp:
+            makefile_text.append("$(shell find " + i + " -name \"*.c\")")
+        del tmp
+    else:
+        makefile_text.append("SRC_MAIN =\t" + str(file_src[0]) + "\t\\")
+        del file_src[0]
 
-    for i in file_src:
-        makefile_text.append("\t\t\t" + str(i) + "\t\\")
+        for i in file_src:
+            makefile_text.append("\t\t\t" + str(i) + "\t\\")
     makefile_text.append("")
     if options[1]:
-        if "main.c" not in copy_src[0]:
-            makefile_text.append("SRC =\t\t" + str(copy_src[0]) + "\t\\")
-            del copy_src[0]
-        else:
-            makefile_text.append("SRC =\t\t" + str(copy_src[1]) + "\t\\")
-            del copy_src[1]
-        for i in copy_src:
-            if "main.c" not in i:
-                makefile_text.append("\t\t\t" + str(i) + "\t\\")
-        makefile_text.append("")
-        if len(file_test) != 0:
-            makefile_text.append("SRC_TEST =\t" + str(file_test[0]) + "\t\\")
-            del file_test[0]
-
-            for i in file_test:
-                makefile_text.append("\t\t\t" + str(i) + "\t\\")
+        if options[7]:
+            for i in file_src:
+                if "main.c" in i:
+                    tmp = i.split("/")
+                    del tmp[0]
+                    tmp2 = "/".join(tmp)
+                    del tmp
+                    break
+            makefile_text.append("SRC=\t\t$(filter-out " + tmp2 + ", $(SRC_MAIN))")
             makefile_text.append("")
+            del tmp2
+            if len(file_test) != 0:
+                makefile_text.append("SRC_TEST =\t$(shell find tests/ -name \"*.c\")")
+                makefile_text.append("")
+        else:
+            if "main.c" not in copy_src[0]:
+                makefile_text.append("SRC =\t\t" + str(copy_src[0]) + "\t\\")
+                del copy_src[0]
+            else:
+                makefile_text.append("SRC =\t\t" + str(copy_src[1]) + "\t\\")
+                del copy_src[1]
+            for i in copy_src:
+                if "main.c" not in i:
+                    makefile_text.append("\t\t\t" + str(i) + "\t\\")
+            makefile_text.append("")
+            if len(file_test) != 0:
+                makefile_text.append("SRC_TEST =\t" + str(file_test[0]) + "\t\\")
+                del file_test[0]
+
+                for i in file_test:
+                    makefile_text.append("\t\t\t" + str(i) + "\t\\")
+                makefile_text.append("")
     if options[4]:
         if len(file_lib) != 0:
             print(warn() + "Adding lib files..." + end())
@@ -191,10 +220,11 @@ def create_makefile(file_src, file_test, file_lib, name):
     makefile_text.append("")
     if options[1]:
         makefile_text.append("tests_run:\t$(SRC_TEST) $(SRC)")
-        makefile_text.append("\t\t\t\tgcc $(SRC) $(SRC_TEST) $(TEST_FLAG) -o $(TEST_NAME)")
-        makefile_text.append("\t\t\t\t./$(TEST_NAME)")
-        makefile_text.append("\t\t\t\tgcovr --exclude tests/")
-        makefile_text.append("\t\t\t\tgcovr -b --exclude tests/")
+        makefile_text.append("\t\t\tgcc $(SRC) $(SRC_TEST) $(TEST_FLAG) -o $(TEST_NAME)")
+        makefile_text.append("\t\t\t./$(TEST_NAME)")
+        if options[6]:
+            makefile_text.append("\t\t\tgcovr --exclude tests/")
+            makefile_text.append("\t\t\tgcovr -b --exclude tests/")
 
     file = open("Makefile", "w", encoding='utf-8')
     text = "\n".join(makefile_text)
@@ -259,7 +289,9 @@ if len(arguments) != 1:
         print("-ncurses: NCURSES flag, create a makefile for ncurses programs.")
         print("-lib: compile your program with your '.a' file.")
         print("-include: add the '/include/' repository to your makefile.")
-        exit(0)
+        print("-gcovr: add gcovr commands. Requires: -t flag.")
+        print("-shell: Search your src files with a shell command.")
+        exit(1)
     else:
         for i in range(1, len(arguments)):
             if arguments[i][0] == '-':
@@ -288,6 +320,16 @@ if len(arguments) != 1:
                 elif arguments[i][1] == 'i':
                     if arguments[i] == '-include':
                         options[5] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                elif arguments[i][1] == 'g':
+                    if arguments[i] == '-gcovr':
+                        options[6] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                elif arguments[i][1] == 's':
+                    if arguments[i] == '-shell':
+                        options[7] = True
                     else:
                         print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                 else:
