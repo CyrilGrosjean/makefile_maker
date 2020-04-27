@@ -11,7 +11,7 @@ options = [False, False, False, False, False, False, False, False] # -d, -t, -cs
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.5.0"
+actual_version = "1.5.1"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -290,7 +290,7 @@ if len(arguments) != 1:
         print("-lib: compile your program with your '.a' file.")
         print("-include: add the '/include/' repository to your makefile.")
         print("-gcovr: add gcovr commands. Requires: -t flag.")
-        print("-shell: Search your src files with a shell command.")
+        print("-shell: Search your src files with a shell command." + fail() + " Disabled if you have a src file in the same repository than your Makefile." + end())
         exit(1)
     else:
         for i in range(1, len(arguments)):
