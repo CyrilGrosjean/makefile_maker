@@ -48,11 +48,8 @@ Then you can use anywhere this script without move it.
 
 The version 1.5.0 added __2__ flags !
 
-The __-gcovr__ flag: It will execute gcovr command automatically when you execute `make tests_run`
-
+The __-gcovr__ flag: It will execute gcovr command automatically when you execute `make tests_run`  
 It __requires__ the -t flag when you launch the makefile maker.
 
-
-The next flag is __-shell__ flag: It search your files directly in your Makefile using the shell command `find`
-
+The next flag is __-shell__ flag: It search your files directly in your Makefile using the shell command `find`  
 __Be carefull__, you can't use this flag if you have one or more src files directly in the same repository where your Makefile is.
