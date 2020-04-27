@@ -11,7 +11,7 @@ options = [False, False, False, False, False, False, False, False] # -d, -t, -cs
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.5.1"
+actual_version = "1.5.2"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -112,10 +112,10 @@ def create_makefile(file_src, file_test, file_lib, name):
                 exit(0)
             if i.split("/")[1] not in tmp:
                 tmp.append(i.split("/")[1])
-        makefile_text.append("SRC_MAIN=\t$(shell find " + tmp[0] + " -name \"*.c\")")
+        makefile_text.append("SRC_MAIN=\t$(shell find " + tmp[0] + " -name \"*.c\") \\")
         del tmp[0]
         for i in tmp:
-            makefile_text.append("$(shell find " + i + " -name \"*.c\")")
+            makefile_text.append("$(shell find " + i + " -name \"*.c\") \\")
         del tmp
     else:
         makefile_text.append("SRC_MAIN =\t" + str(file_src[0]) + "\t\\")
