@@ -25,6 +25,8 @@ Your .c files will be compilated with g3 flag.
 |-lib | Your .c files will be compilated with your .a file. |
 |-include | Your makefile will add './include/' include repository. |
 |-shell | Search your files with the shell command find. |
+|-clean | Use this flag to have a clean make display. |
+|-C | Your make rule will compile with the -C flag. |
 
 ## Auto Update
 
@@ -46,10 +48,17 @@ Then you can use anywhere this script without move it.
 
 ## Last Update
 
-The version 1.5.0 added __2__ flags !
+The version 1.6.0 is out !
 
-The __-gcovr__ flag: It will execute gcovr command automatically when you execute `make tests_run`  
-It __requires__ the -t flag when you launch the makefile maker.
+This version appends two new flags !
 
-The next flag is __-shell__ flag: It search your files directly in your Makefile using the shell command `find`  
-__Be carefull__, you can't use this flag if you have one or more src files directly in the same repository where your Makefile is.
+`-clean` is a flag that set a clean make display.
+
+`-C` I removed the -C flag on make rule because it will result to an error on macOS system.
+So now, if you want to have this flag, just add a -C on argument in update_makefile
+
+I added also the .PHONY rule in the Makefile.
+
+## Next Update
+
+For the next update, the code will be entirely reworked to be more... clean.

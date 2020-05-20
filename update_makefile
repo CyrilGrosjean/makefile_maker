@@ -7,11 +7,11 @@ from os import stat as stats
 import requests
 import stat
 
-options = [False, False, False, False, False, False, False, False] # -d, -t, -csfml, -ncures, -lib, -include, -gcovr, -shell
+options = [False, False, False, False, False, False, False, False, False, False] # -d, -t, -csfml, -ncures, -lib, -include, -gcovr, -shell, -C, -clean
 arguments = sys.argv
 version_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/updates/version"
 file_link = "https://raw.githubusercontent.com/CyrilGrosjean/makefile_maker/master/update_makefile"
-actual_version = "1.5.2"
+actual_version = "1.6.0"
 file_directory = path.abspath(__file__)
 
 def search_update():
@@ -166,6 +166,8 @@ def create_makefile(file_src, file_test, file_lib, name):
             for i in file_lib:
                 makefile_text.append("\t\t\t" + str(i) + "\t\\")
             makefile_text.append("")
+    makefile_text.append("CC =\tgcc")
+    makefile_text.append("")
     makefile_text.append("OBJ =\t$(SRC_MAIN:.c=.o)")
     makefile_text.append("")
     makefile_text.append("NAME =\t\t" + str(name))
@@ -181,7 +183,10 @@ def create_makefile(file_src, file_test, file_lib, name):
         if options[5]:
             makefile_text[-1] += " -I./include/"
         makefile_text.append("")
-    text = "CFLAGS = -W -Wall -Wextra -C"
+    text = "CFLAGS = -W -Wall -Wextra"
+    if options[8]:
+        print(warn() + "Adding -C flag..." + end())
+        text += " -C"
     if options[0]:
         print(warn() + "Adding g3 flag..." + end())
         text += " -g3"
@@ -196,35 +201,60 @@ def create_makefile(file_src, file_test, file_lib, name):
     if options[5]:
         print(warn() + "Adding include flag..." + end())
         makefile_text[-1] += " -I./include/"
+    if options[9]:
+        makefile_text.append("")
+        makefile_text.append("FILE_NB = $(words $(SRC_MAIN))")
     makefile_text.append("")
     makefile_text.append("all:\t$(NAME)")
     makefile_text.append("")
     makefile_text.append("$(NAME):\t$(OBJ)")
-    makefile_text.append("\tgcc $(OBJ) $(CFLAGS)")
+    if options[9]:
+        makefile_text.append("\t@ echo \"\\033[1;36m[ FILES COMPILED ] \\033[0m \\033[1;34m$(FILE_NB)\\033[0m\"")
+        makefile_text.append("\t@ $(CC) $(OBJ) $(CFLAGS)")
+    else:
+        makefile_text.append("\t$(CC) $(OBJ) $(CFLAGS)")
+    if options[9]:
+        makefile_text.append("\t@ echo \"\\033[1;34mBinary : \\033[1;32m$(NAME)\\033[1;34m created sucesfully.\\033[0m\"")
     if options[4]:
         makefile_text[-1] += " -L. $(SRC_LIB)"
     makefile_text[-1] += " -o $(NAME)"
     makefile_text.append("")
     makefile_text.append("clean:")
-    makefile_text.append("\trm -rf $(OBJ)")
+    if options[9]:
+        makefile_text.append("\t@ echo \"\\033[3;31mRemoving: \\033[0m\"")
+        makefile_text.append("\t@ echo \"\\033[3;31m$(OBJS)\\033[0m\" | tr ' ' '\\n'")
+        makefile_text.append("\t@ rm -rf $(OBJ)")
+    else:
+        makefile_text.append("\trm -rf $(OBJ)")
     if options[1]:
         makefile_text.append("\trm -rf *.gc*")
         makefile_text.append("\trm -rf tests/*.gc*")
     makefile_text.append("")
     makefile_text.append("fclean:\tclean")
-    makefile_text.append("\trm -rf $(NAME)")
+    if options[9]:
+        makefile_text.append("\t@ echo \"\\033[3;31m./$(NAME)\\033[0m\"")
+        makefile_text.append("\t@ rm -rf $(NAME)")
+    else:
+        makefile_text.append("\trm -rf $(NAME)")
     if options[1]:
         makefile_text.append("\trm -rf $(TEST_NAME)")
     makefile_text.append("")
     makefile_text.append("re:\tfclean all")
     makefile_text.append("")
+    if options[9]:
+        makefile_text.append("%.o:\t%.c")
+        makefile_text.append("\t\t\t@ echo \"\\033[1;34m[ OK ]\\033[0m Compiling\" $<")
+        makefile_text.append("\t\t\t@ $(CC) -o $@ -c $< $(CFLAGS)")
+        makefile_text.append("")
     if options[1]:
         makefile_text.append("tests_run:\t$(SRC_TEST) $(SRC)")
-        makefile_text.append("\t\t\tgcc $(SRC) $(SRC_TEST) $(TEST_FLAG) -o $(TEST_NAME)")
+        makefile_text.append("\t\t\t$(CC) $(SRC) $(SRC_TEST) $(TEST_FLAG) -o $(TEST_NAME)")
         makefile_text.append("\t\t\t./$(TEST_NAME)")
         if options[6]:
             makefile_text.append("\t\t\tgcovr --exclude tests/")
             makefile_text.append("\t\t\tgcovr -b --exclude tests/")
+        makefile_text.append("")
+    makefile_text.append(".PHONY:\tall clean fclean re")
 
     file = open("Makefile", "w", encoding='utf-8')
     text = "\n".join(makefile_text)
@@ -291,6 +321,8 @@ if len(arguments) != 1:
         print("-include: add the '/include/' repository to your makefile.")
         print("-gcovr: add gcovr commands. Requires: -t flag.")
         print("-shell: Search your src files with a shell command." + fail() + " Disabled if you have a src file in the same repository than your Makefile." + end())
+        print("-C: Add -C flag on your makefile.")
+        print("-clean: Add a clean make display.")
         exit(1)
     else:
         for i in range(1, len(arguments)):
@@ -302,6 +334,8 @@ if len(arguments) != 1:
                 elif arguments[i][1] == 'c':
                     if arguments[i] == "-csfml":
                         options[2] = True
+                    elif arguments[i] == "-clean":
+                        options[9] = True
                     else:
                         print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                         exit(84)
@@ -330,6 +364,11 @@ if len(arguments) != 1:
                 elif arguments[i][1] == 's':
                     if arguments[i] == '-shell':
                         options[7] = True
+                    else:
+                        print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
+                elif arguments[i][1] == 'C':
+                    if arguments[i] == "-C":
+                        options[8] = True
                     else:
                         print(fail() + "Error: Flag not found. Please type './update_makefile -h'")
                 else:
